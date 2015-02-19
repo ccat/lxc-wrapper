@@ -118,8 +118,10 @@ def createImage_from_container(container, image):
                 #shutil.copytree(originRoot, LXC_WRAPPER_IMAGE+image+"/rootfs")
                 result = subprocess.check_output(["cp","-rpf",originRoot, LXC_WRAPPER_IMAGE+image+"/rootfs"],stderr=subprocess.STDOUT)
                 print result
-                result = subprocess.check_output(["cp","-rpf", LXC_HOME+"images/"+image+"/diff/*", LXC_WRAPPER_IMAGE+image+"/rootfs/"],stderr=subprocess.STDOUT)
-                print result
+                try:
+                    result = subprocess.check_output(["cp","-rpf", LXC_HOME+"images/"+image+"/diff/*", LXC_WRAPPER_IMAGE+image+"/rootfs/"],stderr=subprocess.STDOUT)
+                finally:
+                    print result
                 shutil.rmtree(LXC_WRAPPER_IMAGE+image+"/diff")
                 break
 

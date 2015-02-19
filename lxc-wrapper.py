@@ -5,7 +5,7 @@ import os
 import shutil
 import subprocess
 import urllib2
-
+import time
 import json
 
 LXC_HOME="/var/lib/lxc/"
@@ -63,6 +63,7 @@ def create_template(template,image):
                 if(result == "lxc-template"):
                     result = subprocess.check_output(["lxc-start", "-d" ,"-n",image],stderr=subprocess.STDOUT)
                     print result
+                    time.sleep(10)
                     lxcStartFlag=True
                 elif(result == "lxc-started"):
                     lxcStartFlag=True
@@ -117,7 +118,7 @@ def createImage_from_container(container, image):
                 #shutil.copytree(originRoot, LXC_WRAPPER_IMAGE+image+"/rootfs")
                 result = subprocess.check_output(["cp","-rpf",originRoot, LXC_WRAPPER_IMAGE+image+"/rootfs"],stderr=subprocess.STDOUT)
                 print result
-                result = subprocess.check_output(["mv","-f", LXC_HOME+"images/"+image+"/diff/*", LXC_WRAPPER_IMAGE+image+"/rootfs/"],stderr=subprocess.STDOUT)
+                result = subprocess.check_output(["cp","-rpf", LXC_HOME+"images/"+image+"/diff/*", LXC_WRAPPER_IMAGE+image+"/rootfs/"],stderr=subprocess.STDOUT)
                 print result
                 shutil.rmtree(LXC_WRAPPER_IMAGE+image+"/diff")
                 break

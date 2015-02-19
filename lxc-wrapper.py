@@ -35,10 +35,10 @@ def createImage_from_template(template, image):
         except:
             pass
         print result
-    try:
-        os.makedirs(LXC_WRAPPER_IMAGE)
-    except OSError:
-        pass
+    #try:
+    #    os.makedirs(LXC_WRAPPER_IMAGE)
+    #except OSError:
+    #    pass
     shutil.move(LXC_HOME+image, LXC_WRAPPER_IMAGE+image)
     #result = subprocess.check_output(["mv","-f", LXC_HOME+image, LXC_HOME+"images/"+image],stderr=subprocess.STDOUT)
     #print result
@@ -97,10 +97,10 @@ def createImage_from_container(container, image):
         raise Exception("Already image exists")
     if(not os.path.exists(LXC_HOME+container)):
         raise Exception("Container does not exist")
-    try:
-        os.makedirs(LXC_WRAPPER_IMAGE)
-    except OSError:
-        pass
+    #try:
+    #    os.makedirs(LXC_WRAPPER_IMAGE)
+    #except OSError:
+    #    pass
     #shutil.copytree(LXC_HOME+container, LXC_HOME+"images/"+image)
     try:
         result = subprocess.check_output(["cp","-rpf",LXC_HOME+container, LXC_WRAPPER_IMAGE+image],stderr=subprocess.STDOUT)
@@ -114,11 +114,11 @@ def createImage_from_container(container, image):
             if(line.startswith("aufs")):#"aufs  "+LXC_HOME+container+"/rootfs       aufs   defaults,br:"+LXC_HOME+container+"/diff:"+LXC_HOME+"images/"+image+"/rootfs=ro 0 0"
                 lineTemp=line.split(":")[-1]#LXC_HOME+"images/"+image+"/rootfs=ro 0 0"
                 originRoot=lineTemp.split("=")[0]
-                shutil.copytree(originRoot, LXC_WRAPPER_IMAGE+image+"/rootfs")
-                try:
-                    result = subprocess.check_output(["mv","-f", LXC_HOME+"images/"+image+"/diff/*", LXC_WRAPPER_IMAGE+image+"/rootfs/"],stderr=subprocess.STDOUT)
-                finally:
-                    print result
+                #shutil.copytree(originRoot, LXC_WRAPPER_IMAGE+image+"/rootfs")
+                result = subprocess.check_output(["cp","-rpf",originRoot, LXC_WRAPPER_IMAGE+image+"/rootfs"],stderr=subprocess.STDOUT)
+                print result
+                result = subprocess.check_output(["mv","-f", LXC_HOME+"images/"+image+"/diff/*", LXC_WRAPPER_IMAGE+image+"/rootfs/"],stderr=subprocess.STDOUT)
+                print result
                 shutil.rmtree(LXC_WRAPPER_IMAGE+image+"/diff")
                 break
 

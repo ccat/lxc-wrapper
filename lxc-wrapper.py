@@ -29,6 +29,7 @@ def createImage_from_template(template, image):
         raise Exception("Already container exists")
 
     result = create_template(template,image)
+    print "Template container configured"
     if(result == "lxc-started"):
         result = subprocess.call(["lxc-attach", "-n",image,"--","shutdown","-h","now"])
         if(result!=0):
@@ -38,6 +39,7 @@ def createImage_from_template(template, image):
     #except OSError:
     #    pass
     shutil.move(LXC_HOME+image, LXC_WRAPPER_IMAGE+image)
+    print "Template container converted to image"
     #result = subprocess.check_output(["mv","-f", LXC_HOME+image, LXC_HOME+"images/"+image],stderr=subprocess.STDOUT)
     #print result
 
@@ -47,6 +49,7 @@ def create_template(template,image):
         result = subprocess.call(["lxc-create", "-t", template,"-n",image])
         if(result!=0):
             raise Exception("Failed to create container: "+image+", returncode:"+str(result))
+        print "Template lxc container created"
         return "lxc-template"
     else:
         if(os.path.exists(LXC_WRAPPER_TEMPLATE+template)):
@@ -61,6 +64,7 @@ def create_template(template,image):
                     if(result!=0):
                         raise Exception("Failed to start container: "+image+", returncode:"+str(result))
                     time.sleep(10)
+                    print "Template lxc container started"
                     lxcStartFlag=True
                 elif(result == "lxc-started"):
                     lxcStartFlag=True
@@ -88,6 +92,7 @@ def create_template(template,image):
                 f = open(LXC_TEMPLATE_FOLDER+"lxc-"+template,"w")
                 f.write(tempVal["template"])
                 f.close()
+            print "Template file downloaded"
             return create_template(template,image)
 
 def createImage_from_container(container, image):
@@ -102,6 +107,7 @@ def createImage_from_container(container, image):
     #except OSError:
     #    pass
     #shutil.copytree(LXC_HOME+container, LXC_HOME+"images/"+image)
+    print "Copying container to image"
     result = subprocess.call(["cp","-rpf",LXC_HOME+container, LXC_WRAPPER_IMAGE+image])
     if(result!=0):
         raise Exception("Failed to copy container: "+container+" to image: "+image+", returncode:"+str(result))
@@ -114,10 +120,12 @@ def createImage_from_container(container, image):
                 lineTemp=line.split(":")[-1]#LXC_HOME+"images/"+image+"/rootfs=ro 0 0"
                 originRoot=lineTemp.split("=")[0]
                 #shutil.copytree(originRoot, LXC_WRAPPER_IMAGE+image+"/rootfs")
+                print "Copying container rootfs to image"
                 result = subprocess.call(["cp","-rpf",originRoot, LXC_WRAPPER_IMAGE+image+"/rootfs"])
                 if(result!=0):
                     raise Exception("Failed to copy rootfs: "+originRoot+" to image: "+LXC_WRAPPER_IMAGE+image+"/rootfs, returncode:"+str(result))
-                result = subprocess.check_output(["cp","-rpf", LXC_HOME+"images/"+image+"/diff/.", LXC_WRAPPER_IMAGE+image+"/rootfs/"])
+                print "Copying container diff to image"
+                result = subprocess.call(["cp","-rpf", LXC_HOME+"images/"+image+"/diff/.", LXC_WRAPPER_IMAGE+image+"/rootfs/"])
                 if(result!=0):
                     raise Exception("Failed to copy diff: "+LXC_HOME+"images/"+image+"/diff/."+" to rootfs: "+LXC_WRAPPER_IMAGE+image+"/rootfs, returncode:"+str(result))
                 shutil.rmtree(LXC_WRAPPER_IMAGE+image+"/diff")

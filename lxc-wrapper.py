@@ -66,6 +66,8 @@ def create_template(template,image):
                     lxcStartFlag=True
             commands=vals["template"]
             for item in commands.split("\n"):
+                if(item==""):
+                    continue
                 itemList = item.split(" ")
                 tempCommand = ["lxc-attach", "-n",image,"--"]
                 tempCommand.extend(itemList)

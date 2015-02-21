@@ -72,12 +72,13 @@ def create_template(template,image):
             for item in commands.split("\n"):
                 if(item==""):
                     continue
-                itemList = item.split(" ")
-                tempCommand = ["lxc-attach", "-n",image,"--"]
-                tempCommand.extend(itemList)
-                result = subprocess.call(tempCommand)
+                #itemList = item.split(" ")
+                #tempCommand = ["lxc-attach", "-n",image,"--"]
+                #tempCommand.extend(itemList)
+                tempCommand = "lxc-attach -n "+image+" -- "+item
+                result = subprocess.call(tempCommand,shell=True)
                 if(result!=0):
-                    raise Exception("Failed to execute: ''"+item+"'' on: "+image+", returncode:"+str(result))
+                    raise Exception("Failed to execute: '"+item+"' on: "+image+", returncode:"+str(result))
             if(lxcStartFlag):
                 return "lxc-started"
         else:

@@ -14,6 +14,9 @@ LXC_TEMPLATE_LIBRARY="http://library.lxc-wrapper.whiteblack-cat.info/"
 LXC_WRAPPER_IMAGE=LXC_HOME+"images/"
 LXC_WRAPPER_TEMPLATE=LXC_HOME+"templates/"
 
+def showImage():
+    subprocess.call(["ls", LXC_WRAPPER_IMAGE])
+
 def createImage(template, image,container):
     if(template!=None):
         createImage_from_template(template, image)
@@ -179,6 +182,7 @@ if __name__=="__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('-m', dest='command', action='store_const',const="create image",help='Create image from lxc template or container')
     parser.add_argument('-c', dest='command', action='store_const',const="create container",help='Create container from lxc template or image')
+    parser.add_argument('-l', dest='command', action='store_const',const="show image",help='Show image list')
     parser.add_argument('-t', dest='template', help='Set lxc template name',default=None)
     parser.add_argument('-i', dest='image', help='Set image name',default=None)
     parser.add_argument('-n', dest='container', help='Set container name',default=None)
@@ -188,5 +192,7 @@ if __name__=="__main__":
             createImage(args.template,args.image,args.container)
         if(args.command=="create container"):
             createContainer(args.template,args.image,args.container)
+        if(args.command=="show image"):
+            showImage()
     except Exception as e:
         print e.message

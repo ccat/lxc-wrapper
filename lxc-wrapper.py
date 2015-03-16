@@ -7,6 +7,7 @@ import subprocess
 import urllib2
 import time
 import json
+import random
 
 LXC_HOME="/var/lib/lxc/"
 LXC_TEMPLATE_FOLDER="/usr/share/lxc/templates/"
@@ -154,6 +155,7 @@ def createContainer_from_image(image,container):
     createHostname(image,container)
 
 def createConfigFile(origin,newFile,container):
+    macAddr = generateNewMACaddress()
     f = open(newFile, 'w')
     for line in open(origin, 'r'):
         if(line.startswith("lxc.rootfs")):
@@ -162,6 +164,8 @@ def createConfigFile(origin,newFile,container):
             f.write("lxc.mount = "+LXC_HOME+container+"/fstab\n")
         elif(line.startswith("lxc.utsname")):
             f.write("lxc.utsname = "+container+"\n")
+        elif(line.startswith("lxc.network.hwaddr")):
+            f.write("lxc.network.hwaddr = "+macAddr+"\n")
         else:
             f.write(line)
 
@@ -177,6 +181,25 @@ def createHostname(image,container):
     f.write("127.0.0.1   localhost\n")
     f.write("127.0.1.1   "+container+"\n")
     f.close()
+
+def generateNewMACaddress():
+    macAddrList = ["00:16:3e:00:00:00","00:16:3e:ff:ff:ff"]
+    result = subprocess.check_output("grep hwaddr "+LXC_HOME+"*/config",shell=True)
+    tempList = result.split("\n")
+    for item in tempList:
+        tempMACaddr = item.split("=")[1].strip()
+        macAddrList.append(tempMACaddr)
+    newMACaddr = "00:16:3e:00:00:00"
+    randomSource = "0123456789abcdef"
+    while newMACaddr in macAddrList:
+        newMACaddr = "00:16:3e"
+        for i in range(1,4):
+            newMACaddr += ":"
+            newMACaddr += random.choice(randomSource)
+            newMACaddr += random.choice(randomSource)
+    return newMACaddr
+
+
 
 if __name__=="__main__":
     parser = argparse.ArgumentParser()

@@ -155,7 +155,6 @@ def createContainer_from_image(image,container):
     createHostname(image,container)
 
 def createConfigFile(origin,newFile,container):
-    macAddr = generateNewMACaddress()
     f = open(newFile, 'w')
     for line in open(origin, 'r'):
         if(line.startswith("lxc.rootfs")):
@@ -165,7 +164,9 @@ def createConfigFile(origin,newFile,container):
         elif(line.startswith("lxc.utsname")):
             f.write("lxc.utsname = "+container+"\n")
         elif(line.startswith("lxc.network.hwaddr")):
+            macAddr = generateNewMACaddress()
             f.write("lxc.network.hwaddr = "+macAddr+"\n")
+            f.flush()
         else:
             f.write(line)
 

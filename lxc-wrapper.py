@@ -149,10 +149,15 @@ def createContainer_from_image(image,container):
     if(os.path.exists(LXC_HOME+container)):
         raise Exception("Already container exists")
     os.makedirs(LXC_HOME+container+"/rootfs")
+    print "rootfs dir created"
     os.makedirs(LXC_HOME+container+"/diff/etc")
+    print "diff dir created"
     createConfigFile(LXC_WRAPPER_IMAGE+image+"/config",LXC_HOME+container+"/config",container)
+    print "config file created"
     createFstabFile(image,container)
+    print "fstab created"
     createHostname(image,container)
+    print "hostname changed"
 
 def createConfigFile(origin,newFile,container):
     f = open(newFile, 'w')
@@ -188,8 +193,9 @@ def generateNewMACaddress():
     result = subprocess.check_output("grep hwaddr "+LXC_HOME+"*/config",shell=True)
     tempList = result.split("\n")
     for item in tempList:
-        tempMACaddr = item.split("=")[1].strip()
-        macAddrList.append(tempMACaddr)
+        if("=" in item):
+            tempMACaddr = item.split("=")[1].strip()
+            macAddrList.append(tempMACaddr)
     newMACaddr = "00:16:3e:00:00:00"
     randomSource = "0123456789abcdef"
     while newMACaddr in macAddrList:

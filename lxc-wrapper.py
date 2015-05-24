@@ -171,9 +171,10 @@ def createConfigFile(origin,newFile,container):
         elif(line.startswith("lxc.network.hwaddr")):
             macAddr = generateNewMACaddress()
             f.write("lxc.network.hwaddr = "+macAddr+"\n")
-            f.flush()
+            #f.flush()
         else:
             f.write(line)
+    f.close()
 
 def createFstabFile(image,container):
     f = open(LXC_HOME+container+"/fstab", 'w')
@@ -225,4 +226,4 @@ if __name__=="__main__":
         if(args.command=="show image"):
             showImage()
     except Exception as e:
-        print e
+        print e.messages

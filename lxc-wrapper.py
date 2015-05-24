@@ -162,7 +162,6 @@ def createContainer_from_image(image,container):
 def createConfigFile(origin,newFile,container):
     f = open(newFile, 'w')
     for line in open(origin, 'r'):
-        print line
         if(line.startswith("lxc.rootfs")):
             f.write("lxc.rootfs = "+LXC_HOME+container+"/rootfs\n")
         elif(line.startswith("lxc.mount")):

@@ -225,4 +225,4 @@ if __name__=="__main__":
         if(args.command=="show image"):
             showImage()
     except Exception as e:
-        print e.message
+        print e

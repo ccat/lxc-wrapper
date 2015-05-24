@@ -192,12 +192,16 @@ def createHostname(image,container):
 
 def generateNewMACaddress():
     macAddrList = ["00:16:3e:00:00:00","00:16:3e:ff:ff:ff"]
+    print "start"
     result = subprocess.check_output("grep hwaddr "+LXC_HOME+"*/config",shell=True)
+    print "check_out"
     tempList = result.split("\n")
+    print "splited"
     for item in tempList:
         if("=" in item):
             tempMACaddr = item.split("=")[1].strip()
             macAddrList.append(tempMACaddr)
+    print "added"
     newMACaddr = "00:16:3e:00:00:00"
     randomSource = "0123456789abcdef"
     while newMACaddr in macAddrList:
@@ -206,6 +210,7 @@ def generateNewMACaddress():
             newMACaddr += ":"
             newMACaddr += random.choice(randomSource)
             newMACaddr += random.choice(randomSource)
+    print "randomed"
     return newMACaddr
 
 
@@ -227,4 +232,4 @@ if __name__=="__main__":
         if(args.command=="show image"):
             showImage()
     except Exception as e:
-        print e.messages
+        print e.message
